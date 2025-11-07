@@ -1,10 +1,15 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: #020817;
   color: #e5e7eb;
+}
+
+.hidden {
+  display: none !important;
 }
 
 #wrapper {
@@ -20,11 +25,12 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 h1 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .status {
@@ -35,11 +41,14 @@ h1 {
   color: #e5e7eb;
 }
 
+/* Top half: video */
+
 #video-section {
-  flex: 1.2;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 40vh;
 }
 
 #sim-video {
@@ -48,39 +57,125 @@ h1 {
   object-fit: contain;
   border-radius: 0.75rem;
   background: #000;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
 }
 
-#buttons-section {
+/* Bottom half: controls */
+
+#controls-section {
   flex: 1;
+  min-height: 40vh;
+  position: relative;
+  padding-top: 0.4rem;
+}
+
+/* Toggle button in top-right of bottom half */
+
+#toggle-layout {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.1rem;
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: #111827;
+  color: #e5e7eb;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.07s ease;
 }
 
-#buttons-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-auto-rows: minmax(48px, 1fr);
-  gap: 0.4rem;
+#toggle-layout:active {
+  transform: scale(0.94);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  background: #1f2937;
+}
+
+/* Layout containers */
+
+.layout {
   width: 100%;
-  max-width: 500px;
+  height: 100%;
+  padding: 0.4rem 0.1rem 0.1rem 0.1rem;
+  box-sizing: border-box;
+  display: flex;
 }
 
-#buttons-grid button {
+/* Layout A: plus-shaped 5 buttons (1-5) */
+
+#layout-a {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+#layout-a .pos {
+  justify-self: stretch;
+  align-self: stretch;
+}
+
+#layout-a .top {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#layout-a .left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+#layout-a .center {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+#layout-a .right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+#layout-a .bottom {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+/* Layout B: 3x2 grid (6-11) */
+
+#layout-b {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 0.4rem;
+}
+
+/* Shared button styling */
+
+#layout-a button,
+#layout-b button {
   border: none;
   border-radius: 0.8rem;
   background: #111827;
   color: #e5e7eb;
   font-size: 0.95rem;
   font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   transition: transform 0.07s ease, box-shadow 0.07s ease, background 0.07s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#buttons-grid button:active {
+#layout-a button:active,
+#layout-b button:active {
   transform: translateY(1px) scale(0.97);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
   background: #1f2937;
 }
 
@@ -89,4 +184,5 @@ h1 {
   color: #9ca3af;
   text-align: center;
   margin: 0;
+  padding-top: 0.1rem;
 }

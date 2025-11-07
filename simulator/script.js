@@ -1,3 +1,5 @@
+import * as THREE from 'https://unpkg.com/three@0.152.2/build/three.module.js';
+
 // Simulator logic: one active controller, QR pairing, Three.js cube + stream to controller
 
 const waitingEl = document.getElementById('waiting');
@@ -29,10 +31,7 @@ window.addEventListener('load', () => {
 
 function initPeer() {
   peer = new Peer({
-    // Configure custom PeerJS server here if desired:
-    // host: 'your-peer-server',
-    // port: 9000,
-    // path: '/peerjs'
+    // host/port/path if using your own PeerJS server
   });
 
   peer.on('open', (id) => {
@@ -62,7 +61,6 @@ function initPeer() {
 
 // Handle new controller, enforce single connection
 function handleNewConnection(conn) {
-  // If an existing controller is connected, drop it
   if (dataConn && dataConn.open) {
     log(`Closing previous controller ${dataConn.peer}`);
     try { dataConn.close(); } catch (_) {}
@@ -181,7 +179,6 @@ function initThree() {
 
   camera.position.z = 4;
 
-  // Capture stream from the WebGL canvas
   if (renderer.domElement.captureStream) {
     stream = renderer.domElement.captureStream(30);
     log('Canvas captureStream initialized.');
@@ -235,18 +232,42 @@ function handleButtonEvent(id) {
 
   const step = 0.3;
   switch (id) {
-    case 1: cube.position.x -= step; break;
-    case 2: cube.position.x += step; break;
-    case 3: cube.position.y += step; break;
-    case 4: cube.position.y -= step; break;
-    case 5: cube.position.z += step; break;
-    case 6: cube.position.z -= step; break;
-    case 7: cube.rotation.x += 0.2; break;
-    case 8: cube.rotation.y += 0.2; break;
-    case 9: cube.rotation.z += 0.2; break;
-    case 10:
-    default:
+    case 1: // move left
+      cube.position.x -= step;
+      break;
+    case 2: // move right
+      cube.position.x += step;
+      break;
+    case 3: // move up
+      cube.position.y += step;
+      break;
+    case 4: // move down
+      cube.position.y -= step;
+      break;
+    case 5: // move forward
+      cube.position.z += step;
+      break;
+    case 6: // move backward
+      cube.position.z -= step;
+      break;
+    case 7: // rotate x
+      cube.rotation.x += 0.2;
+      break;
+    case 8: // rotate y
+      cube.rotation.y += 0.2;
+      break;
+    case 9: // rotate z
+      cube.rotation.z += 0.2;
+      break;
+    case 10: // toggle wireframe
       cube.material.wireframe = !cube.material.wireframe;
+      break;
+    case 11: // reset cube
+      cube.position.set(0, 0, 0);
+      cube.rotation.set(0, 0, 0);
+      cube.material.wireframe = false;
+      break;
+    default:
       break;
   }
 }

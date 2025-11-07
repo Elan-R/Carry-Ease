@@ -15,23 +15,32 @@
       <div id="status" class="status">Initializing…</div>
     </header>
 
+    <!-- Top half: video feed -->
     <section id="video-section">
       <video id="sim-video" autoplay playsinline muted></video>
     </section>
 
-    <section id="buttons-section">
-      <div id="buttons-grid">
-        <!-- 10 buttons -->
-        <button data-id="1">1</button>
-        <button data-id="2">2</button>
-        <button data-id="3">3</button>
-        <button data-id="4">4</button>
-        <button data-id="5">5</button>
+    <!-- Bottom half: controls with toggle -->
+    <section id="controls-section">
+      <button id="toggle-layout" aria-label="Toggle control layout">⇆</button>
+
+      <!-- Layout A (default): buttons 1-5 in plus around center -->
+      <div id="layout-a" class="layout">
+        <button data-id="1" class="pos top">1</button>
+        <button data-id="2" class="pos left">2</button>
+        <button data-id="3" class="pos center">3</button>
+        <button data-id="4" class="pos right">4</button>
+        <button data-id="5" class="pos bottom">5</button>
+      </div>
+
+      <!-- Layout B: 3x2 grid, buttons 6-11 -->
+      <div id="layout-b" class="layout hidden">
         <button data-id="6">6</button>
         <button data-id="7">7</button>
         <button data-id="8">8</button>
         <button data-id="9">9</button>
         <button data-id="10">10</button>
+        <button data-id="11">11</button>
       </div>
     </section>
 

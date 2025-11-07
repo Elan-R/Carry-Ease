@@ -1,10 +1,14 @@
-// Controller logic: connect to simulator via PeerJS, send button presses,
-// receive video stream from simulator.
+// Controller logic: connects to simulator via PeerJS, sends button events,
+// receives video stream, supports two control layouts with toggle.
 
 const statusEl = document.getElementById('status');
 const videoEl = document.getElementById('sim-video');
-const buttonsGrid = document.getElementById('buttons-grid');
 const hintEl = document.getElementById('hint');
+
+const controlsSection = document.getElementById('controls-section');
+const layoutA = document.getElementById('layout-a');
+const layoutB = document.getElementById('layout-b');
+const toggleLayoutBtn = document.getElementById('toggle-layout');
 
 const params = new URLSearchParams(window.location.search);
 const simulatorId = params.get('simId');
@@ -12,28 +16,29 @@ const simulatorId = params.get('simId');
 let peer;
 let dataConn = null;
 let currentCall = null;
+let isLayoutA = true; // default
 
 // ---------- Init ----------
 
 window.addEventListener('load', () => {
   if (!simulatorId) {
-    statusEl.textContent = 'No simulator ID';
-    statusEl.style.background = '#7f1d1d';
+    status('No simulator ID in URL', '#7f1d1d');
     hintEl.textContent = 'Open this page by scanning the QR code from the Simulator.';
-    disableButtons();
+    disableAllButtons();
     return;
   }
 
   hintEl.textContent = `Binding to simulator: ${simulatorId}`;
   initPeer();
   setupButtons();
+  setupLayoutToggle();
 });
 
-// ---------- PeerJS ----------
+// ---------- PeerJS setup ----------
 
 function initPeer() {
   peer = new Peer({
-    // Configure your own PeerJS server here if needed.
+    // configure peer server if needed
   });
 
   peer.on('open', (id) => {
@@ -42,12 +47,12 @@ function initPeer() {
   });
 
   peer.on('call', (call) => {
-    // Expect call from simulator carrying its Three.js canvas stream
+    // Receive video stream from simulator
     if (currentCall) {
       try { currentCall.close(); } catch (_) {}
     }
     currentCall = call;
-    call.answer(); // no local stream; just receive
+    call.answer(); // no local stream
     call.on('stream', (remoteStream) => {
       attachStream(remoteStream);
     });
@@ -75,7 +80,7 @@ function connectToSimulator(controllerPeerId) {
 
   dataConn.on('open', () => {
     status('Connected to simulator', '#065f46');
-    // Tell simulator how to reach us for media
+    // Tell simulator where to call for video
     dataConn.send({ type: 'registerViewer', peerId: controllerPeerId });
   });
 
@@ -93,20 +98,36 @@ function connectToSimulator(controllerPeerId) {
   });
 
   dataConn.on('data', (msg) => {
-    // Reserved for future feedback from simulator if desired
+    // Placeholder for future messages from simulator
     console.log('From simulator:', msg);
   });
 }
 
-// ---------- UI: Buttons ----------
+// ---------- Buttons & Layout ----------
 
 function setupButtons() {
-  buttonsGrid.addEventListener('click', (e) => {
-    if (!(e.target instanceof HTMLButtonElement)) return;
-    const id = parseInt(e.target.dataset.id, 10);
+  // Delegate clicks from both layouts
+  controlsSection.addEventListener('click', (e) => {
+    const btn = e.target;
+    if (!(btn instanceof HTMLButtonElement)) return;
+    const id = parseInt(btn.dataset.id, 10);
     if (!Number.isInteger(id)) return;
+
     sendButtonPress(id);
-    flashButton(e.target);
+    flashButton(btn);
+  });
+}
+
+function setupLayoutToggle() {
+  toggleLayoutBtn.addEventListener('click', () => {
+    isLayoutA = !isLayoutA;
+    if (isLayoutA) {
+      layoutA.classList.remove('hidden');
+      layoutB.classList.add('hidden');
+    } else {
+      layoutA.classList.add('hidden');
+      layoutB.classList.remove('hidden');
+    }
   });
 }
 
@@ -119,15 +140,16 @@ function sendButtonPress(id) {
 }
 
 function flashButton(btn) {
+  const original = btn.style.transform;
   btn.style.transform = 'scale(0.96)';
   setTimeout(() => {
-    btn.style.transform = '';
+    btn.style.transform = original || '';
   }, 80);
 }
 
-function disableButtons() {
-  const buttons = buttonsGrid.querySelectorAll('button');
-  buttons.forEach(b => {
+function disableAllButtons() {
+  const buttons = controlsSection.querySelectorAll('button[data-id]');
+  buttons.forEach((b) => {
     b.disabled = true;
     b.style.opacity = '0.4';
   });
