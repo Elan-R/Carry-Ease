@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- PeerJS -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <!-- QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+</head>
+<body>
+  <div id="waiting" class="state">
+    <h1>Waiting for Controller</h1>
+    <p>Scan this QR code on your phone to connect:</p>
+    <div id="qrcode"></div>
+    <p class="small">Or open this URL on mobile:</p>
+    <p id="controller-url" class="link"></p>
+    <div id="sim-id" class="small"></div>
+  </div>
+
+  <div id="simulating" class="state hidden">
+    <header>
+      <h1>Simulating</h1>
+      <div id="status" class="status">Connected</div>
+    </header>
+    <main>
+      <div id="three-container"></div>
+      <div id="log"></div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
